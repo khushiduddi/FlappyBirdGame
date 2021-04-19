@@ -1,24 +1,21 @@
-For my final project I am going to make the game atari break out using cinder.
-In this game, there are blocks on the top of the screen and a ball which bounces against 
-a board which the user can move across the bottom of the screen. The ball moves on its own and when
-it hits a block, the block disappears. The objective of the game is to clear all of the blocks by making
-sure the ball keeps moving around without hitting the ground, where the board is not. The user has to move
-the board with the keys and make sure the ball does not hit the floor.
+For my final project I am going to make the game flappy bird using cinder.
+In this game, there are pipes and different types of obstacles and a bird has to navigate through.
+Everytime a user clicks on the screen the bird flaps and stays afloat. In order to keep the bird
+flying the user has to continuously tap. I will make the game my own by having different themes and 
+playing sounds.
 
 The background knowledge of this kind of project comes from the past assignments we have had 
 using Cinder. In ideal gas I learned how to set up rectangles on the screen, create a ball which 
 moves with a velocity, and deal with collisions, all of which will help me in 
-creating Atari breakout. I want to do this project because I love playing Atari breakout
-and have a lot fun with it. I think it would be cool to make my own version.
+creating flappy bird. The key down features will help me program the space the bar to keep the
+bird flying. I want to do this project because I loved playing flappy bird growing up. 
+I think it would be cool to make my own version.
 
-By the end of week one, I will have added structures to the game screen like the blocks, the moving
-ball, and the board at the bottom of the screen. By week 2, I will have implemented a method which 
-allows the user to move the board across the bottom of the screen with
-the arrow keys. By the end of week 3, I will have implemented the collision methods and made sure
-that any block touched by the ball disappears. I will also make sure the ball goes upward after colliding
-with the board at the bottom. If the ball misses the board, I will end the game for the player
-and give a final score.
+By the end of week one, I will have added structures to the game screen for the background. I will also
+implement the base controls like start game and exit using a GUI. By week 2, I will implement the bird(player object)
+which flies due to the space bar being clicked on. Also I will add the obstacles to the screen. By week 3, I will add a pause 
+control so the game can be paused. I will also add a score board which keeps track how many obstacles the bird
+makes it through. When the player loses, the screen will display the score and allow the user to replay.
 
 If I were to finish the project early, some "stretch goals" I could implement are making 
-the blocks move around the screen, add more than one ball, or create blocks that need to be
-hit by the ball multiple times in order to disappear.
+the obstacles move so it is harder for the bird to make it through and add power ups for the bird.
