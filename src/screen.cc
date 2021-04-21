@@ -34,7 +34,6 @@ namespace flappybird {
         if (!birds_.empty()) {
             for (Bird bird: birds_) {
                 //ci::gl::color(bird.GetColor());
-                std::cout << "drawing at position: " << bird.GetPosition() << "\n";
                 ci::gl::drawSolidCircle(bird.GetPosition(), bird.GetRadius());
                 //ci::gl::clearColor(kColor);
             }

@@ -6,7 +6,7 @@
 using flappybird::Screen;
 using flappybird::Bird;
 
-TEST_CASE("Check bird position after move method.") {
+TEST_CASE("Check bird position after executing move method.") {
     glm::vec2 pos(2, 5);
     glm::vec2 vel(2, 1);
     Bird test_bird(pos, vel, 10, 10, ci::Color::black());

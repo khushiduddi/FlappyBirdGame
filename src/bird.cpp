@@ -1,5 +1,5 @@
 //
-// Created by Khushi Duddi on 3/16/21.
+// Created by Khushi Duddi on 3/16/21
 //
 #include "bird.h"
 #include "cinder/gl/gl.h"

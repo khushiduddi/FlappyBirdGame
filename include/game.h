@@ -8,7 +8,7 @@
 namespace flappybird {
 
 /**
- * An app for the game flappy bird.
+ * An app for the game flappybird.
  */
     class Game : public ci::app::App {
     public:

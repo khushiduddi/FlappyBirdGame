@@ -17,7 +17,7 @@ namespace flappybird {
         Screen(const glm::vec2 &top_left, size_t pixels_per_side);
 
         /**
-         * Displays the background and bird.
+         * Displays the background and the bird.
          */
         void Display() const;
 

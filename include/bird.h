@@ -1,5 +1,5 @@
 //
-// Created by Khushi Duddi on 3/16/21.
+// Created by Khushi Duddi on 3/16/21
 //
 
 #ifndef FLAPPY_BIRD_BIRD_H

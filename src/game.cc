@@ -9,7 +9,7 @@ namespace flappybird {
     void Game::draw() {
         //ci::Color background_color(150, 220, 160);
         //ci::gl::clear(background_color);
-        ci::gl::clear();
+        //ci::gl::clear();
         ci::gl::draw(texture_);
         screen_.Display();
     }
