@@ -26,12 +26,12 @@ namespace flappybird {
          * Returns a bird's velocity
          */
         //&
-        glm::vec2 GetVelocity();
+        glm::vec2 GetVelocity() const;
 
         /**
          * Returns a bird's position
          */
-        glm::vec2 GetPosition();
+        glm::vec2 GetPosition() const;
 
         /**
          * Returns a bird's position
@@ -41,12 +41,12 @@ namespace flappybird {
         /**
          * Returns a color position
          */
-        ci::Color GetColor();
+        ci::Color GetColor() const;
 
         /**
          * Returns a mass position
          */
-        float GetMass();
+        float GetMass() const;
 
         /**
          * Changes the velocity of a bird with a given velocity vector

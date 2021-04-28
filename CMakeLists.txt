@@ -49,9 +49,10 @@ get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
-list(APPEND SOURCE_FILES src/screen.cc
+list(APPEND SOURCE_FILES src/game_display.cc
         src/game.cc
-        src/bird.cpp)
+        src/bird.cpp
+        src/game_engine.cpp)
 
 list(APPEND TEST_FILES tests/flappy_bird_test_file.cc)
 

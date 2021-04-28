@@ -14,12 +14,12 @@ namespace flappybird {
         color_ = color;
     }
 
-    glm::vec2 flappybird::Bird::GetPosition() {
+    glm::vec2 flappybird::Bird::GetPosition() const {
         const vec2 &pos = position_;
         return pos;
     }
 
-    glm::vec2 flappybird::Bird::GetVelocity() {
+    glm::vec2 flappybird::Bird::GetVelocity() const {
         const vec2 &vel = velocity_;
         return vel;
     }
@@ -29,12 +29,12 @@ namespace flappybird {
         return rad;
     }
 
-    float flappybird::Bird::GetMass() {
+    float flappybird::Bird::GetMass() const {
         const float mass = mass_;
         return mass;
     }
 
-    ci::Color flappybird::Bird::GetColor() {
+    ci::Color flappybird::Bird::GetColor() const {
         const ci::Color &col = color_;
         return col;
     }
