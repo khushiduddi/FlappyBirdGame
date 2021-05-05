@@ -94,6 +94,4 @@ namespace flappybird {
             position_ = setPosition;
         }
     }
-
-
 }  //namespace flappybird

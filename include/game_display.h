@@ -37,7 +37,7 @@ namespace flappybird {
         void Jump();
 
         /**
-         * Sets the game status to a given int which is one of the designated game statuses
+         * Sets the game status to a given int which is one of the designated game statuses.
          * @param status
          * @return
          */

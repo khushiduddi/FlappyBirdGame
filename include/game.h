@@ -28,7 +28,6 @@ namespace flappybird {
 
     private:
         GameDisplay gameDisplay_;
-        ci::gl::Texture2dRef texture_;
     };
 
 }  // namespace flappybird

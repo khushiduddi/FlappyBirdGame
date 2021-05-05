@@ -39,12 +39,12 @@ namespace flappybird {
         void Move();
 
         /**
-         * Sets the acceleration to a value greater than 0
+         * Sets the acceleration to a value greater than 0.
          */
         void Jump();
 
         /**
-         * Changes the frame of the bird gif so the bird's wings flap and eyes blink
+         * Changes the frame of the bird gif so the bird's wings flap and eyes blink.
          */
         void Flap();
 

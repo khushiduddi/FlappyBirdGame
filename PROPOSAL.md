@@ -16,4 +16,4 @@ pause control so the game can be paused. I will also add a score board which kee
 makes it through. When the player loses, the screen will display the score and allow the user to replay.
 
 If I were to finish the project early, some "stretch goals" I could implement are making the obstacles move so it is
-harder for the bird_ to make it through and add power ups for the bird_.
+harder for the bird_ to make it through and add power ups for the bird_. 

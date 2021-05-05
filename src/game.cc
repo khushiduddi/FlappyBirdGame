@@ -25,5 +25,4 @@ namespace flappybird {
         if (event.getCode() == ci::app::KeyEvent::KEY_RETURN)
             gameDisplay_.StartGame();
     }
-
 }  // namespace flappybird

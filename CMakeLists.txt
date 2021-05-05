@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12 FATAL_ERROR)
 set(CMAKE_CXX_STANDARD 11)
 project(final-project-kduddi2)
 
-# This tells the compiler to not aggressively optimize and
+# This tells the compiler to not aggressively optimize an
 # to include debugging information so that the debugger
 # can properly read what's going on.
 set(CMAKE_BUILD_TYPE Debug)

@@ -11,7 +11,7 @@ TEST_CASE("Test bird getters and setters to make sure they work correctly.") {
     vec2 pos(4, 30);
     vec2 vel(2, 1);
     Bird test_bird(pos, vel, 0, 50, true);
-    SECTION("Test bird method GetPosition") {
+    SECTION("Test bird method GetPosition.") {
         REQUIRE(test_bird.GetPosition().x == Approx(4));
         REQUIRE(test_bird.GetPosition().y == Approx(30));
     }
