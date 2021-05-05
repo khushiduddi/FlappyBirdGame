@@ -20,53 +20,82 @@ namespace flappybird {
         /**
          * Creates a Bird with a position an velocity
          */
-        Bird(const glm::vec2 &setPosition, const vec2 &setVelocity, double rad, double mass, ci::Color color);
+        Bird(const glm::vec2 setPosition, const vec2 setVelocity, int top, int bottom, bool isTest = false);
 
         /**
-         * Returns a bird's velocity
-         */
-        //&
-        glm::vec2 GetVelocity() const;
-
-        /**
-         * Returns a bird's position
+         * Returns a bird_'s position
          */
         glm::vec2 GetPosition() const;
 
         /**
-         * Returns a bird's position
+         * Changes a bird's position to a given vec2
+         * @param setPosition
          */
-        float GetRadius() const;
+        void SetPosition(const vec2 setPosition);
 
         /**
-         * Returns a color position
-         */
-        ci::Color GetColor() const;
-
-        /**
-         * Returns a mass position
-         */
-        float GetMass() const;
-
-        /**
-         * Changes the velocity of a bird with a given velocity vector
-         */
-        void SetVelocity(const glm::vec2 &new_vel) { velocity_ = new_vel; }
-
-
-        /**
-         * Updates the velocities position each second based off the velocity
+         * Updates the velocities position each second based off the velocity and acceleration
          */
         void Move();
 
+        /**
+         * Sets the acceleration to a value greater than 0
+         */
         void Jump();
+
+        /**
+         * Changes the frame of the bird gif so the bird's wings flap and eyes blink
+         */
+        void Flap();
+
+        /**
+         * Returns the bird image
+         * @return
+         */
+        ci::gl::Texture2dRef GetTexture() const;
+
+        /**
+         * Returns an int which is the y position of top of the bird based
+         * of the birds position on the screen
+         * @return int
+         */
+        int GetTop() const;
+
+        /**
+         * Returns an int which is the y position of bottom of the bird based
+         * of the birds position on the screen
+         * @return int
+         */
+        int GetBottom() const;
+
+        /**
+         * Returns an int which is the x position of right of the bird based
+         * of the birds position on the screen
+         * @return int
+         */
+        int GetRight() const;
+
+        /**
+         * Returns an int which is the x position of left of the bird based
+         * of the birds position on the screen
+         * @return int
+         */
+        int GetLeft() const;
 
     private:
         glm::vec2 position_;
         glm::vec2 velocity_;
-        double radius_;
-        double mass_;
-        ci::Color color_;
+        int display_top_;
+        int display_bottom_;
+        ci::gl::Texture2dRef texture_;
+        std::vector<ci::gl::Texture2dRef> textures_;
+        int frame_index_;
+        int frame_rate_;
+        const int kFrameRate = 5;
+        int acceleration_;
+
+        int width_;
+        int height_;
     };
 
 }  // namespace flappybird

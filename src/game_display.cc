@@ -1,6 +1,7 @@
 #include "game_display.h"
 #include "bird.h"
 #include <utility>
+#include "cinder/app/app.h"
 
 namespace flappybird {
 
@@ -8,22 +9,18 @@ namespace flappybird {
 
     GameDisplay::GameDisplay(const vec2 &top_left, size_t pixels_per_side)
             : top_left_(top_left), num_pixels_per_side_(pixels_per_side),
-              engine_(), obstacle_offset_(pixels_per_side / 2), obstacle_start_index_(0),
-              kBottomPosition(top_left_.y + num_pixels_per_side_ / 2) {
-        std::cout << "top_left_: " << top_left_ << " num_pixels: " << num_pixels_per_side_ << std::endl;
-        std::cout << "kBottom position: " << kBottomPosition << std::endl;
-        //ci::gl::Texture2dRef texture_;
-        auto background = ci::loadImage(
-                "/Users/khushiduddi/Downloads/Cinder/my-projects/final-project-kduddi2/data/flappbirdbackground.png");
-        texture_ = ci::gl::Texture2d::create(background);
-        vec2 pos_1(200, 200);
+              kBottomPosition(top_left_.y + num_pixels_per_side_ / 2),
+              bird_(vec2(kBirdStartPos, kBirdStartPos), vec2(kBirdVelocity, kBirdVelocity), top_left.y,
+                    kBottomPosition),
+              obstacle_offset_(pixels_per_side / 2), obstacle_start_index_(0) {
 
-        Bird flappy_bird = Bird(pos_1, kBirdVelocity, kBirdRadius, kBirdMass, kBirdColor);
+        game_status_ = kGameNotStarted;
+        score_ = 0;
 
-        for (size_t count = 0; count < kNumOfBirds; count++) {
-            Bird bird = flappy_bird;
-            birds_.push_back(bird);
-        }
+        texture_ = ci::gl::Texture2d::create(ci::loadImage(ci::app::loadResource("flappybirdbackground.png")));
+        texture_pipe_bottom_ = ci::gl::Texture2d::create(
+                ci::loadImage(ci::app::loadResource("flappy-bird-pipe-bottom.png")));
+        texture_pipe_top_ = ci::gl::Texture2d::create(ci::loadImage(ci::app::loadResource("flappy-bird-pipe-top.png")));
 
         for (size_t i = 0; i < kNumOfObstacles; i++) {
             // Create obstacles with random heights between positions 150 and 250
@@ -32,89 +29,89 @@ namespace flappybird {
     }
 
     void GameDisplay::Display() const {
-        if (engine_.GetGameStatus() == engine_.kGameNotStarted) {
+        if (game_status_ == kGameNotStarted) {
             DisplayBackground();
+            DrawBird();
             vec2 pos((top_left_.x + num_pixels_per_side_) / 2, (top_left_.y + num_pixels_per_side_ / 2) / 2);
             ci::gl::drawStringCentered("Press enter to start game.", pos, ci::Color::white(),
                                        ci::Font(kFontName, kFontSize));
-
         }
-        if (engine_.GetGameStatus() == engine_.kGameInProgress) {
-            //ci::gl::color(kColor);
+        if (game_status_ == kGameInProgress) {
             DisplayBackground();
-
-            if (!birds_.empty()) {
-                for (Bird bird: birds_) {
-                    ci::gl::color(ci::Color(5, 20, 0));
-                    ci::gl::drawSolidCircle(bird.GetPosition(), bird.GetRadius());
-                    ci::gl::color(ci::Color::white());
-                }
-            }
-
+            DrawBird();
         }
-
-        if (engine_.GetGameStatus() == engine_.kGameOver) {
+        if (game_status_ == kGamePaused) {
             DisplayBackground();
-            if (!birds_.empty()) {
-                for (Bird bird: birds_) {
-                    ci::gl::color(ci::Color(5, 20, 0));
-                    ci::gl::drawSolidCircle(bird.GetPosition(), bird.GetRadius());
-                    ci::gl::color(ci::Color::white());
-                }
-            }
+            DrawBird();
+            vec2 pos((top_left_.x + num_pixels_per_side_) / 2, (top_left_.y + num_pixels_per_side_ / 2) / 2);
+            ci::gl::drawStringCentered("Press enter to resume game.", pos, ci::Color::white(),
+                                       ci::Font(kFontName, kFontSize));
+        }
+        if (game_status_ == kGameOver) {
+            DisplayBackground();
+            DrawBird();
             vec2 p1((top_left_.x + num_pixels_per_side_) / 2, (top_left_.y + num_pixels_per_side_ / 2) / 2);
             ci::gl::drawStringCentered("Game over.", p1, ci::Color::white(), ci::Font(kFontName, kFontSize));
             vec2 p2((top_left_.x + num_pixels_per_side_) / 2, (top_left_.y + num_pixels_per_side_ / 3));
-            std::string score = "Score: " + std::to_string(engine_.GetScore());
+            std::string score = "Score: " + std::to_string(score_);
             ci::gl::drawStringCentered(score, p2, ci::Color::white(), ci::Font(kFontName, kFontSize));
-
         }
-
     }
 
     void GameDisplay::AdvanceOneFrame() {
-        if (engine_.GetGameStatus() == GameEngine::kGameInProgress) {
-            for (Bird &bird: birds_) {
-                if (bird.GetPosition().y < kBottomPosition) {
-                    if (obstacle_offset_ == 30) {
-                        int bird_at = (obstacle_start_index_ + 1) % kNumOfObstacles;
-                        std::cout << "Bird at:  " << bird_at << " Position: " << bird.GetPosition().y << " Height: "
-                                  << obstacles_[bird_at] << std::endl;
-                        if (bird.GetPosition().y <= obstacles_[bird_at]) {
-                            std::cout << "Bird hit top of obstacle. \n";
-                            engine_.SetGameStatus(engine_.kGameOver);
-                        }
-                        if (bird.GetPosition().y > obstacles_[bird_at] + kObstacleGap) {
-                            std::cout << "Bird hit bottom of obstacle. \n";
-                            engine_.SetGameStatus(engine_.kGameOver);
-                        }
-                        engine_.AddScore();
+        bird_.Flap();
+        if (game_status_ == kGameInProgress) {
+            if (bird_.GetBottom() < kBottomPosition) {
+                int bird_at = -1;
+                // Check if bird is at an obstacle
+                if (bird_.GetRight() >= top_left_.x + obstacle_offset_ &&
+                    bird_.GetLeft() <= top_left_.x + obstacle_offset_ + kObstacleThickness) {
+                    bird_at = obstacle_start_index_;
+                }
+                if (bird_.GetRight() >= top_left_.x + obstacle_offset_ + kSpaceBetweenObstacles &&
+                    bird_.GetLeft() <= top_left_.x + obstacle_offset_ + kObstacleThickness + kSpaceBetweenObstacles) {
+                    bird_at = (obstacle_start_index_ + 1) % kNumOfObstacles;
+                }
+                if (bird_at >= 0) {
+                    // Bird hit top of obstacle
+                    if (bird_.GetTop() <= (obstacles_[bird_at] + top_left_.y)) {
+                        SetGameStatus(kGameOver);
                     }
-                    bird.Move();
+                        // Bird hit bottom of obstacle
+                    else if (bird_.GetBottom() > obstacles_[bird_at] + top_left_.y + kObstacleGap) {
+                        SetGameStatus(kGameOver);
+                    }
+                        // Checking if bird has successfully passed an obstacle
+                    else if (bird_.GetLeft() == top_left_.x + obstacle_offset_ + kObstacleThickness ||
+                             bird_.GetLeft() ==
+                             top_left_.x + obstacle_offset_ + kObstacleThickness + kSpaceBetweenObstacles) {
+                        score_++;
+                    }
                 }
-                if (bird.GetPosition().y >= kBottomPosition) {
-                    engine_.SetGameStatus(engine_.kGameOver);
-                }
+                bird_.Move();
             }
+            if (bird_.GetBottom() >= kBottomPosition) {
+                SetGameStatus(kGameOver);
+            }
+
             obstacle_offset_ -= 1;
             if (obstacle_offset_ == -(kObstacleThickness + top_left_.x)) {
+                obstacles_[obstacle_start_index_] = rand() % (250 - 150) + 150;
                 obstacle_offset_ += kSpaceBetweenObstacles;
                 obstacle_start_index_ = (obstacle_start_index_ + 1) % kNumOfObstacles;
             }
         }
     }
 
-    void GameDisplay::Clear() {
-        birds_.clear();
-        engine_.SetGameStatus(GameEngine::kGameOver);
+    void GameDisplay::EndGame() {
+        SetGameStatus(kGameOver);
     }
 
     void GameDisplay::Jump() {
-        if (engine_.GetGameStatus() == GameEngine::kGameInProgress) {
-            for (Bird &bird: birds_) {
-                if (bird.GetPosition().y < kBottomPosition && bird.GetPosition().y > top_left_.y + 2 * kBirdRadius) {
-                    bird.Jump();
-                }
+        if (game_status_ == kGameInProgress) {
+            if (bird_.GetBottom() < kBottomPosition &&
+                bird_.GetTop() > top_left_.y) {
+                bird_.Jump();
             }
         }
     }
@@ -124,34 +121,70 @@ namespace flappybird {
         ci::gl::draw(texture_);
         ci::gl::drawStrokedRect(
                 ci::Rectf(top_left_, top_left_ + ci::vec2((num_pixels_per_side_), (num_pixels_per_side_ / 2))));
-        ci::gl::drawString("Score: " + std::to_string(engine_.GetScore()), top_left_, ci::Color::white(),
-                           ci::Font(kFontName, kFontSize));
-        if (engine_.GetGameStatus() != engine_.kGameNotStarted) {
+        if (game_status_ != kGameNotStarted) {
             int x = top_left_.x + obstacle_offset_;
             for (size_t i = 0; i < kNumOfObstacles; i++) {
                 int j = (obstacle_start_index_ + i) % kNumOfObstacles;
                 vec2 pos(x, 10);
-                //if (pos.x > 200 && pos.x < 200 + kObstacleThickness)
-                //std::cout << "start index: " << obstacle_start_index_ << " offset: " << obstacle_offset_ << " j: " << j << " pos: " << pos << std::endl;
                 DrawObstacle(obstacles_[j], pos);
                 x += kSpaceBetweenObstacles;
             }
         }
+        vec2 pos(top_left_.x + 10, top_left_.y + 10);
+        ci::gl::drawString("Score: " + std::to_string(score_), pos, ci::Color::white(),
+                           ci::Font(kFontName, kFontSize));
     }
 
-    int GameDisplay::SetEngineStatus(int status) {
-        return engine_.SetGameStatus(status);
+    int GameDisplay::SetGameStatus(int status) {
+        if (status < kGameNotStarted || status > kGameOver) {
+            return -1;
+        }
+        // Game progresses through these states
+        // NotStarted -> InProgress ------+-----> Over
+        //                  ^ ^           |        |
+        //                  | +-- Pause --+        |
+        //                  |                      |
+        //                  +----------------------+
+        if ((game_status_ == kGameNotStarted && status != kGameInProgress) ||
+            (game_status_ == kGameInProgress && !(status == kGameOver || status == kGamePaused)) ||
+            (game_status_ == kGamePaused && status != kGameInProgress) ||
+            (game_status_ == kGameOver && status != kGameInProgress)) {
+            return -1;
+        }
+        game_status_ = status;
+        return 0;
     }
 
     void GameDisplay::DrawObstacle(int height, vec2 pos1) const {
         vec2 pos2(pos1.x + kObstacleThickness, pos1.y + height);
-        ci::gl::color(ci::Color(0, 20, 10));
-        ci::gl::drawSolidRect(ci::Rectf(pos1, pos2));
+        ci::gl::draw(texture_pipe_top_, ci::Rectf(pos1, pos2));
 
         vec2 pos3(pos1.x, pos2.y + kObstacleGap);
         vec2 pos4(pos1.x + kObstacleThickness, kBottomPosition);
-        ci::gl::drawSolidRect(ci::Rectf(pos3, pos4));
-        ci::gl::color(ci::Color::white());
+        ci::gl::draw(texture_pipe_bottom_, ci::Rectf(pos3, pos4));
     }
 
+    void GameDisplay::DrawBird() const {
+        ci::gl::draw(bird_.GetTexture(), vec2(bird_.GetLeft(), bird_.GetTop()));
+    }
+
+    void GameDisplay::StartGame() {
+        int previous_status = game_status_;
+        if (SetGameStatus(kGameInProgress) < 0) {
+            return;
+        }
+        if (previous_status == kGamePaused) {
+            return;
+        }
+        bird_.SetPosition(vec2(kBirdStartPos, kBirdStartPos));
+        obstacle_offset_ = num_pixels_per_side_ / 2;
+        obstacle_start_index_ = 0;
+        score_ = 0;
+    }
+
+    void GameDisplay::PauseGame() {
+        if (SetGameStatus(kGamePaused) < 0) {
+            return;
+        }
+    }
 }  // namespace flappybird

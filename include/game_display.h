@@ -2,15 +2,14 @@
 
 #include "cinder/gl/gl.h"
 #include "bird.h"
-#include "game_engine.h"
 
 using glm::vec2;
 
 namespace flappybird {
 
 /**
- * The container in which the bird and other game elements are contained.
- * This class stores the bird and updates it on each frame of the game.
+ * The container in which the bird_ and other game elements are contained.
+ * This class stores the bird_ and updates it on each frame of the game.
  */
     class GameDisplay {
     public:
@@ -18,23 +17,41 @@ namespace flappybird {
         GameDisplay(const glm::vec2 &top_left, size_t pixels_per_side);
 
         /**
-         * Displays the background and the bird.
+         * Displays the background and the bird_.
          */
         void Display() const;
 
         /**
-         * Updates the positions and velocities of the bird.
+         * Starts a game and resets the pregame conditions based off the previous status
+         */
+        void StartGame();
+
+        /**
+         * Updates the positions of the bird_ and the obstacles.
          */
         void AdvanceOneFrame();
 
+        /**
+         * Called the bird jump method if certain conditions are met.
+         */
         void Jump();
 
-        int SetEngineStatus(int status);
+        /**
+         * Sets the game status to a given int which is one of the designated game statuses
+         * @param status
+         * @return
+         */
+        int SetGameStatus(int status);
 
         /**
-         * Removes the bird.
+         * Pauses the game freezing the screen
+         */
+        void PauseGame();
+
+        /**
+         * Changes status to kGameOver and ends the game.
          * */
-        void Clear();
+        void EndGame();
 
 
     private:
@@ -43,29 +60,37 @@ namespace flappybird {
 
         void DrawObstacle(int height, vec2 pos1) const;
 
+        void DrawBird() const;
+
         glm::vec2 top_left_;
         size_t num_pixels_per_side_;
-        GameEngine engine_;
+        const int kBottomPosition;
+        //GameEngine engine_;
 
-        std::vector<Bird> birds_;
+        Bird bird_;
         std::vector<int> obstacles_;
         int obstacle_offset_;
         int obstacle_start_index_;
 
         ci::gl::Texture2dRef texture_;
+        ci::gl::Texture2dRef texture_pipe_top_;
+        ci::gl::Texture2dRef texture_pipe_bottom_;
 
-        const glm::vec2 kBirdVelocity = glm::vec2(2, 2);
-        const double kBirdRadius = 20;
-        const float kBirdMass = 50;
-        const ci::Color kBirdColor = ci::Color::hex(0x9B0000);
+        static const int kBirdVelocity = 2;
+        static const int kBirdStartPos = 200;
 
-        const size_t kNumOfBirds = 1;
-        const size_t kNumOfObstacles = 7;
-        const size_t kObstacleGap = 120;
-        const size_t kSpaceBetweenObstacles = 150;
-        const size_t kObstacleThickness = 50;
+        static const size_t kNumOfObstacles = 7;
+        static const size_t kObstacleGap = 120;
+        static const size_t kSpaceBetweenObstacles = 150;
+        static const size_t kObstacleThickness = 50;
 
-        const int kBottomPosition;
+        static const int kGameNotStarted = 0;
+        static const int kGameInProgress = 1;
+        static const int kGamePaused = 2;
+        static const int kGameOver = 3;
+
+        int game_status_;
+        int score_;
 
         const float kFontSize = 32;
         const std::string kFontName = "Arial";

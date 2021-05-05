@@ -51,16 +51,21 @@ include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
 list(APPEND SOURCE_FILES src/game_display.cc
         src/game.cc
-        src/bird.cpp
-        src/game_engine.cpp)
+        src/bird.cpp)
 
 list(APPEND TEST_FILES tests/flappy_bird_test_file.cc)
+
+list(APPEND RESOURCE_FILES data/flappybirdbackground.png
+        data/flappybird.gif
+        data/flappy-bird-pipe-bottom.png
+        data/flappy-bird-pipe-top.png)
 
 ci_make_app(
         APP_NAME game
         CINDER_PATH ${CINDER_PATH}
         SOURCES apps/cinder_app_main.cc ${SOURCE_FILES}
         INCLUDES include
+        RESOURCES ${RESOURCE_FILES}
 )
 
 ci_make_app(
@@ -69,6 +74,7 @@ ci_make_app(
         SOURCES tests/test_main.cc ${SOURCE_FILES} ${TEST_FILES}
         INCLUDES include
         LIBRARIES catch2
+        RESOURCES ${RESOURCE_FILES}
 )
 
 if (MSVC)

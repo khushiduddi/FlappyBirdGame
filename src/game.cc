@@ -7,9 +7,6 @@ namespace flappybird {
     }
 
     void Game::draw() {
-        //ci::Color background_color(150, 220, 160);
-        //ci::gl::clear(background_color);
-        //ci::gl::clear();
         gameDisplay_.Display();
     }
 
@@ -19,13 +16,14 @@ namespace flappybird {
 
     void Game::keyDown(ci::app::KeyEvent event) {
         if (event.getCode() == ci::app::KeyEvent::KEY_DELETE)
-            gameDisplay_.Clear();
+            gameDisplay_.EndGame();
+        if (event.getCode() == ci::app::KeyEvent::KEY_p)
+            gameDisplay_.PauseGame();
         if (event.getCode() == ci::app::KeyEvent::KEY_SPACE) {
             gameDisplay_.Jump();
         }
         if (event.getCode() == ci::app::KeyEvent::KEY_RETURN)
-            gameDisplay_.SetEngineStatus(GameEngine::kGameInProgress);
+            gameDisplay_.StartGame();
     }
-
 
 }  // namespace flappybird
